@@ -6,14 +6,16 @@ import {FaHotel,FaCar,FaMoneyBill} from 'react-icons/fa'
 import {BsBriefcaseFill} from 'react-icons/bs'
 import {GiCommercialAirplane} from 'react-icons/gi'
 import {RiShipFill} from 'react-icons/ri'
+import {ImUser} from 'react-icons/im'
 import { useContext } from 'react'
 import AuthContext from '../Contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 
 
 const Navbar = ()=>{
 
-    const {isAuth , login , logout, toggleAuth} = useContext(AuthContext);
+    const {isAuth ,toggleAuth,authName , toggleAuthName , authId, toggleAuthId} = useContext(AuthContext);
 
     const MenuListArray = [
         {
@@ -57,6 +59,8 @@ const Navbar = ()=>{
         }
     ]
 
+    const navigate = useNavigate();
+
     return (
         <Flex w="full" h="80px" bg="#0a438b" p="5px 30px" color='white' >
             <HStack spacing={10}>
@@ -78,16 +82,38 @@ const Navbar = ()=>{
                 <Text fontSize='16px'>Support </Text>
                 <Text fontSize='16px'>Trips</Text>
                 <Menu>
-                    <MenuButton as={Button} variant='ghost' fontSize={'16px'}>
-                        Sign in
+                    <MenuButton as={Button} variant='ghost' fontSize={'16px'} leftIcon={<ImUser/>}>
+                        {isAuth?authName: 'Sign in'}
                     </MenuButton>
                     <MenuList maxW='350px' color={"black"}>
-                        <MenuItem _hover={{bg : 'none'}}><Heading textAlign='center' as='h4' size='md'>Members can access discounts and special features</Heading></MenuItem>
-                        <MenuItem textAlign={'center'} _hover={{bg:'none'}}><Button variant='solid' color="white" _hover={{color:'black'}} bg={'#0d5ab9'} margin={'7px auto'}>Sign in</Button></MenuItem>
-                        <MenuItem textAlign={'center'} _hover={{bg:'none'}}><Button variant="ghost" bg={'white'} color="#0d5ab9" margin={'3px auto'}>Create a free account</Button></MenuItem>
-                        <MenuItem fontSize='14px'>List of Favorites</MenuItem>
-                        <MenuItem _hover={{bg:'none'}}><Divider /></MenuItem>
-                        <MenuItem fontSize='14px'>Feedback</MenuItem>
+                        {
+                            isAuth?(
+                                <>
+                                <MenuItem fontSize='14px'>Account Setup</MenuItem>
+                                <MenuItem fontSize='14px'>List of Favorites</MenuItem>
+                                <MenuItem fontSize='14px'>Feedback</MenuItem>
+                                <MenuItem _hover={{bg:'none'}}><Divider /></MenuItem>
+                                <MenuItem fontSize='14px' onClick={()=>{
+                                    toggleAuth(false);
+                                    toggleAuthName(null);
+                                    toggleAuthId(null);
+                                }}>Logout</MenuItem>
+                                </>
+                            ):(
+                                <>
+                                <MenuItem _hover={{bg : 'none'}}><Heading textAlign='center' as='h4' size='md'>Members can access discounts and special features</Heading></MenuItem>
+                                <MenuItem textAlign={'center'} _hover={{bg:'none'}}><Button variant='solid' color="white" _hover={{color:'black'}} bg={'#0d5ab9'} margin={'7px auto'} onClick={()=>{
+                                    navigate('/signin');
+                                }}>Sign in</Button></MenuItem>
+                                <MenuItem textAlign={'center'} _hover={{bg:'none'}}><Button variant="ghost" bg={'white'} color="#0d5ab9" margin={'3px auto'} onClick={()=>{
+                                    navigate('/signup');
+                                }}>Create a free account</Button></MenuItem>
+                                <MenuItem fontSize='14px'>List of Favorites</MenuItem>
+                                <MenuItem _hover={{bg:'none'}}><Divider /></MenuItem>
+                                <MenuItem fontSize='14px'>Feedback</MenuItem>
+                                </>
+                            )
+                        }
                     </MenuList>
                 </Menu>
             </HStack>

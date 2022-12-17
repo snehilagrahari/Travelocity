@@ -1,4 +1,3 @@
-import Semi_Nav from "./Semi_Nav"
 import {
     Container,
     Heading,
@@ -18,8 +17,9 @@ import { useReducer , useEffect } from "react"
 import { useState } from "react"
 import { useContext } from "react"
 import AuthContext from "../Contexts/AuthContext"
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
 import authApp from "./firebase.config"
+import AlertDialogExample from "./AlertBox"
 
 
 
@@ -63,9 +63,12 @@ const Signup = ()=>{
 
     const [formData,setFormData] = useReducer(reducer , initForm);
 
-    const {loading , toggleLoading} = useContext(AuthContext);
+    const {loading , toggleLoading, error , toggleError} = useContext(AuthContext);
 
     const [validate , setValidate] = useState(true);
+    const [error_code , setError_code] = useState('');
+
+    
 
     useEffect(()=>{
         validateForm();
@@ -96,22 +99,29 @@ const Signup = ()=>{
 
                 const user = userCredential.user;
                 toggleLoading(false);
+                setFormData({type : 'reset'});
+                updateProfile(auth.currentUser,{displayName:`${formData.firstName} ${formData.lastName}`});
                 console.log(user);
-                alert('Signup successful!');
+                alert('Signup Successful!');
                 
             })
             .catch((error) => {
                 toggleLoading(false);
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                alert(' error');
-                console.log(errorCode , errorMessage);
+                setError_code(errorCode);
+                toggleError(true);
             });
     }
+
+    const closeDialog =()=> {
+        toggleError(false)
+        setError_code(null);
+    };
     
     return (
         <>
-        <Semi_Nav />
+        <AlertDialogExample error_code={error_code} processName='Sign Up' status={error} closeDialog = {closeDialog} />
         <Container w='md' textAlign="left" padding={7}>
             <Heading size='lg'>Create a New Account</Heading>
             <form onSubmit={handleSubmit}>
@@ -123,11 +133,11 @@ const Signup = ()=>{
                     </FormControl>
                     <FormControl>
                         <FormLabel>First Name</FormLabel>
-                        <Input name='firstName' type='text' value={formData.firstName} placeholder="Password" onChange={handleChange} w='full' required />
+                        <Input name='firstName' type='text' value={formData.firstName} placeholder="First Name" onChange={handleChange} w='full' required />
                     </FormControl>
                     <FormControl>
                         <FormLabel>Last Name</FormLabel>
-                        <Input type='text' name='lastName' value={formData.lastName} placeholder="Password" onChange={handleChange} w='full' required/>
+                        <Input type='text' name='lastName' value={formData.lastName} placeholder="Last Name" onChange={handleChange} w='full' required/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>Password</FormLabel>
@@ -152,7 +162,7 @@ const Signup = ()=>{
                     
                 </VStack>    
             </form>
-            <Text textAlign='center'>Already have an account? <Link href="#" color='blue'> Sign in</Link></Text>
+            <Text textAlign='center'>Already have an account? <Link href="/signin" color='blue'> Sign in</Link></Text>
             
         </Container>
         </>

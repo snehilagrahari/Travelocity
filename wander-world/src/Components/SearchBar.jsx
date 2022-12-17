@@ -20,20 +20,41 @@ import {
   Image,
   Center
 } from '@chakra-ui/react'
-
+import { useContext } from 'react'
+import {useNavigate} from 'react-router-dom'
 import {ImLocation} from 'react-icons/im'
+import SearchContext from '../Contexts/SearchContext'
+import findDate from './TodayDate'
 
 
 
 const SearchBar = ()=>{
 
+    const {day , month , year} = findDate();
+
+    const navigate = useNavigate();
+
+    const {searchForm, updateSearchForm} = useContext(SearchContext);
 
     const handleSubmit=(e)=>{
         e.preventDefault();
+        navigate('/Hotel-Search');
+    }
+
+    const handleFormChange = (e)=>{
+        const action = {
+            mode : e.target.name,
+            data : e.target.value
+        }
+
+        updateSearchForm(action);
     }
 
     return (
-        <Box p={'25px 40px'}  bgImage="url(https://forever.travel-assets.com/flex/flexmanager/images/2021/06/25/TVLY_SeizeYourSomeday_lpheroB_1680x945_20210623.jpg?impolicy=fcrop&w=900&h=225&q=mediumHigh)">
+        <Box p={'25px 40px'}  
+        bgImage="url(https://forever.travel-assets.com/flex/flexmanager/images/2021/06/25/TVLY_SeizeYourSomeday_lpheroB_1680x945_20210623.jpg?impolicy=fcrop&w=900&h=225&q=mediumHigh)"
+        bgSize='full'
+        bgPos='center'>
             <Box borderRadius={'20px'} w='full' bg='white' p='30px 0'>
                 <Tabs>
                     <TabList justifyContent='center'>
@@ -57,20 +78,46 @@ const SearchBar = ()=>{
                                             pointerEvents='none'
                                             children={<ImLocation size="18px" color='grey' />}
                                             />
-                                            <Input type='tel' placeholder='Going to...' />
+                                            <Input 
+                                            type='tel' 
+                                            name='place'
+                                            placeholder='Going to...' 
+                                            value={searchForm.place} 
+                                            onChange={handleFormChange}
+                                            required />
                                         </InputGroup>
                                     </Box>
                                     <Box flex={1}>  
                                         <FormLabel fontSize='md'>Check-in</FormLabel>
-                                        <Input type='date' color='grey'/>
+                                        <Input 
+                                        name='check-in'
+                                        type='date' 
+                                        value={searchForm['check-in']}
+                                        onChange={handleFormChange}
+                                        min={`${year}-${month}-${day}`}
+                                        color='grey'
+                                        required/>
                                     </Box>
                                     <Box flex={1}>  
                                         <FormLabel fontSize='md'>Check-out</FormLabel>
-                                        <Input type='date' color='grey'/>
+                                        <Input 
+                                        name='check-out'
+                                        type='date' 
+                                        value={searchForm['check-out']}
+                                        min={searchForm['check-in']}
+                                        onChange={handleFormChange}
+                                        color='grey'
+                                        required/>
                                     </Box>
                                     <Box flex={1}>  
                                         <FormLabel fontSize='md'>Travelers</FormLabel>
-                                            <Select placeholder='Travelers' color='grey'>
+                                            <Select 
+                                            name='travelers'
+                                            placeholder='Travelers' 
+                                            value={searchForm.travelers}
+                                            onChange={handleFormChange}
+                                            color='grey'
+                                            required>
                                                 <option value='1'>1</option>
                                                 <option value='2'>2</option>
                                             </Select>

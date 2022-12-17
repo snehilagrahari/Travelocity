@@ -1,4 +1,3 @@
-import Semi_Nav from "./Semi_Nav"
 import {
     Container,
     Heading,
@@ -20,6 +19,11 @@ import { useEffect } from "react";
 import { useContext } from "react";
 import AuthContext from "../Contexts/AuthContext";
 import authApp from "./firebase.config"; 
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import AlertDialogExample from "./AlertBox";
+import { useNavigate } from 'react-router-dom';
+
+
 
 
 
@@ -27,6 +31,8 @@ const initForm = {
     email : '',
     password : ''
 }
+
+const auth = getAuth(authApp);
 
 const reducer = (state , action)=>{
     switch(action.type)
@@ -52,7 +58,10 @@ const Login = ()=>{
 
     const [formData , setFormData] = useReducer(reducer , initForm)
 
-    const {loading, toggleLoading} = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    const {loading, toggleLoading, error , toggleError , toggleAuth, toggleAuthId , toggleAuthName} = useContext(AuthContext);
+    const [errorCode , setErrorCode] = useState(null); 
 
     useEffect(()=>{
         ValidateForm();
@@ -65,6 +74,7 @@ const Login = ()=>{
             setValidate(true);
     }
 
+
     const handlePassword = (e)=>{
         setFormData({type:'password' , payload : e.target.value})
     }
@@ -76,17 +86,33 @@ const Login = ()=>{
     const handleSubmit = (e)=>{
         e.preventDefault()
         toggleLoading(true);
-        console.log(formData);
-        setTimeout(() => {
-            toggleLoading(false);
-            setFormData({type : 'reset'});
-        }, 3000);
-        
+        signInWithEmailAndPassword(auth, formData.email, formData.password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                toggleLoading(false);
+                console.log(user);
+                toggleAuth(true);
+                toggleAuthId(user.uid);
+                toggleAuthName(user.displayName);
+                setFormData({type : 'reset'})
+                navigate('/');
+                alert("Success");
+            })
+            .catch((error) => {
+                setErrorCode(error.code);
+                toggleLoading(false);
+                toggleError(true);
+            }); 
+    }
+
+    const closeDialog = ()=>{
+        toggleError(false);
+        setErrorCode(null);
     }
     
     return (
         <>
-        <Semi_Nav />
+        <AlertDialogExample status={error} error_code={errorCode} processName='Login' closeDialog={closeDialog}  />
         <Container w='md' textAlign="left" padding={7}>
             <Heading size='lg'>Sign In</Heading>
             <form onSubmit={handleSubmit}>
@@ -117,7 +143,7 @@ const Login = ()=>{
                     
                 </VStack>    
             </form>
-            <Text textAlign='center'>Dont have an account? <Link href="#" color='blue'> Create a new one</Link></Text>
+            <Text textAlign='center'>Don't have an account? <Link href="/signup" color='blue'> Create a new one</Link></Text>
             
         </Container>
         </>
