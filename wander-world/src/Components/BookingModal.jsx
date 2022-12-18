@@ -56,7 +56,7 @@ function BookingModal(props) {
         onLoading(val);
     }
 
-    let {room , onClose, onOpen, isOpen} = props;
+    let {room,hotelName , onClose, onOpen, isOpen} = props;
 
     const handleBooking = ()=>{
         onLoading(true);
@@ -67,8 +67,9 @@ function BookingModal(props) {
     const confirmTrip = ()=>{
 
         const data = {
-            id : authId,
-            total : ((num?num:1)*Number(room?.roomPrice)),
+            profileId : authId,
+            hotelName : hotelName,
+            total : ((num?num:1)*Number(room.roomPrice)),
             roomDetails : room,
             ...searchForm
         }

@@ -108,7 +108,7 @@ const HotelPage = ()=>{
                 </Grid>
             </Box>
             <Box>
-                <BookingModal onClose={onClose} onOpen={onOpen} isOpen={isOpen} room={room} />
+                <BookingModal onClose={onClose} onOpen={onOpen} hotelName={HotelDetails.hotelName} isOpen={isOpen} room={room} />
             </Box>
                 
         </Box>

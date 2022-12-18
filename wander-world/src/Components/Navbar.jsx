@@ -62,6 +62,7 @@ const Navbar = ()=>{
 
     const navigate = useNavigate();
 
+
     return (
         <Flex w="full" h="80px" bg="#0a438b" p="5px 30px" color='white' >
             <HStack spacing={3}>
@@ -81,7 +82,7 @@ const Navbar = ()=>{
             <HStack spacing={25}>
                 <Text fontSize='16px'>List your Property</Text>
                 <Text fontSize='16px'>Support </Text>
-                <Text fontSize='16px'>Trips</Text>
+                <Text fontSize='16px' onClick={()=>{navigate('/trips')}} cursor='pointer'>Trips</Text>
                 <Menu>
                     <MenuButton as={Button} variant='ghost' fontSize={'16px'} leftIcon={<ImUser/>}>
                         {isAuth?authName: 'Sign in'}

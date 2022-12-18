@@ -6,6 +6,7 @@ import Signup from './Signup'
 import NoAccess from './NoAccess'
 import SearchPage from './SearchPage'
 import HotelPage from './HotelPage'
+import TripPage from './TripPage'
 
 const AllRoutes = ()=>{
 
@@ -18,6 +19,7 @@ const AllRoutes = ()=>{
                 <Route path="/signup" element={<NoAccess><Signup /></NoAccess>}/>
                 <Route path="/Hotel-Search" element={<SearchPage />}/>
                 <Route path='/Hotels/:hotelId' element={<PrivateRoute><HotelPage /></PrivateRoute>} />
+                <Route path='/trips' element={<PrivateRoute><TripPage /></PrivateRoute>} />
             </Routes>
         </>
     )
