@@ -21,7 +21,7 @@ const SearchHotelCard = (props)=>{
 
 
     const handleClick=()=>{
-        navigate('/Hotel/:id');
+        navigate(`/Hotels/${id}`);
     }
 
 
@@ -29,11 +29,11 @@ const SearchHotelCard = (props)=>{
         <>
             <Box border="1px solid lightgray" borderRadius='lg' minH='200px' onClick={handleClick} cursor='pointer' _hover={{border:'1px solid blue'}}>
                 <Flex direction='row' h='full'>
-                    <Image src='https://forever.travel-assets.com/flex/flexmanager/images/2021/06/25/TVLY_SeizeYourSomeday_lpheroB_1680x945_20210623.jpg?impolicy=fcrop&w=900&h=225&q=mediumHigh' w='30%' borderTopLeftRadius='lg' borderBottomLeftRadius='lg'/>
+                    <Image src={hotelImages[0]} w='30%' borderTopLeftRadius='lg' maxH='250px' borderBottomLeftRadius='lg'/>
 
                     <Flex direction='column' w='70%'h='full' p={2}>
-                        <Heading textAlign='left' size='lg'>{hotelName}</Heading>
-                        <Text color='grey' size='sm'>{hotelLocation}</Text>
+                        <Heading textAlign='left' size='md'>{hotelName}</Heading>
+                        <Text color='grey' size='sm' textAlign='left'>{hotelLocation}</Text>
                         <Text textAlign='left' fontSize='14px' color='grey'>{hotelStar}-star Property</Text>
                         <Flex direction='row' h='full'>
                             <Flex direction='column-reverse' flex={1}
@@ -48,7 +48,7 @@ const SearchHotelCard = (props)=>{
                             alignItems='flex-end' p='20px 2px 5px 2px'>
                                 <Text color='grey' fontSize='12px'>includes taxes & fees</Text>
                                 <Text color='grey' fontSize='12px'>${parseInt(1.1*hotelPrice)} total</Text>
-                                <Text size='lg' fontWeight='bold'>${hotelPrice}</Text>
+                                <Text fontSize='xl' fontWeight='bold'>${hotelPrice}</Text>
                                 <Tag bg='#ebf3f9' color='blue' p='10px 15px'>{hotelDiscount}% discount</Tag>
 
                             </Flex>

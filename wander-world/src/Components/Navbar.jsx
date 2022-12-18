@@ -1,5 +1,5 @@
 import {
-    Flex, Heading, HStack, Menu, MenuButton,MenuList,MenuItem,Button, Spacer, Text, Divider
+    Flex, Heading, HStack, Menu, MenuButton,MenuList,MenuItem,Button, Spacer, Text, Divider, Image
 } from '@chakra-ui/react'
 import {ChevronDownIcon} from '@chakra-ui/icons'
 import {FaHotel,FaCar,FaMoneyBill} from 'react-icons/fa'
@@ -10,6 +10,7 @@ import {ImUser} from 'react-icons/im'
 import { useContext } from 'react'
 import AuthContext from '../Contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import Travelocity from '../travelocity.png'
 
 
 
@@ -63,8 +64,8 @@ const Navbar = ()=>{
 
     return (
         <Flex w="full" h="80px" bg="#0a438b" p="5px 30px" color='white' >
-            <HStack spacing={10}>
-                <Heading as='h5' size='md'>Travelocity</Heading>
+            <HStack spacing={3}>
+                <Image src={Travelocity} alt='none' onClick={()=>{navigate('/')}} cursor='pointer' />
                 <Menu>
                     <MenuButton as={Button} bg="none" variant='ghost' color='white' fontSize='16px' rightIcon={<ChevronDownIcon />} _hover={{ bg : 'none'}}>
                         More Travel

@@ -38,7 +38,7 @@ const SearchBar = ()=>{
 
     const handleSubmit=(e)=>{
         e.preventDefault();
-        navigate('/Hotel-Search');
+        navigate(`/Hotel-Search`);
     }
 
     const handleFormChange = (e)=>{
@@ -120,6 +120,8 @@ const SearchBar = ()=>{
                                             required>
                                                 <option value='1'>1</option>
                                                 <option value='2'>2</option>
+                                                <option value='3'>3</option>
+                                                <option value='4'>4</option>
                                             </Select>
                                     </Box>
                                 </Flex>

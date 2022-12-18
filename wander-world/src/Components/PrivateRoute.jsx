@@ -14,12 +14,17 @@ import {
 
  } from "@chakra-ui/react"
 import { useRef } from "react"
+import { useEffect } from "react"
 
 const PrivateRoute = ({children})=>{
 
     const {isAuth} = useContext(AuthContext)
 
-    const {isOpen , onOpen , onClose} = useDisclosure(true)
+    const {isOpen , onOpen , onClose} = useDisclosure()
+
+    useEffect(()=>{
+        onOpen();
+    },[]);
 
     const cancelRef = useRef();
 
@@ -29,13 +34,10 @@ const PrivateRoute = ({children})=>{
         navigate('/signin');
 
     }
-
     return (
         isAuth ? 
         (
-          <>
-            {children}
-          </>  
+          children 
         ) : (
             <>
                 <AlertDialog

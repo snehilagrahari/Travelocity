@@ -22,7 +22,7 @@ import authApp from "./firebase.config";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import AlertDialogExample from "./AlertBox";
 import { useNavigate } from 'react-router-dom';
-
+import {displaySnackBar} from './SnackBar'
 
 
 
@@ -90,13 +90,12 @@ const Login = ()=>{
             .then((userCredential) => {
                 const user = userCredential.user;
                 toggleLoading(false);
-                console.log(user);
                 toggleAuth(true);
                 toggleAuthId(user.uid);
+                displaySnackBar('Login Succesful!','Plan for a trip now!');
                 toggleAuthName(user.displayName);
                 setFormData({type : 'reset'})
                 navigate('/');
-                alert("Success");
             })
             .catch((error) => {
                 setErrorCode(error.code);

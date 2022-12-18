@@ -13,6 +13,7 @@ import {
     FormHelperText
 
 } from '@chakra-ui/react'
+import axios from 'axios'
 import { useReducer , useEffect } from "react"
 import { useState } from "react"
 import { useContext } from "react"
@@ -20,6 +21,8 @@ import AuthContext from "../Contexts/AuthContext"
 import { getAuth, createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
 import authApp from "./firebase.config"
 import AlertDialogExample from "./AlertBox"
+import { displaySnackBar } from './SnackBar'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -67,6 +70,7 @@ const Signup = ()=>{
 
     const [validate , setValidate] = useState(true);
     const [error_code , setError_code] = useState('');
+    const navigate = useNavigate();
 
     
 
@@ -91,6 +95,30 @@ const Signup = ()=>{
         setFormData(action)
     }
 
+    const signUpDataUpload = (id,email)=>{
+
+        const data = {
+            id : id,
+            userEmail : formData.email.toLowerCase(),
+            userPassword : formData.password,
+            userName : `${formData.firstName} ${formData.lastName}`,
+            userTrips : []
+        }
+
+        axios.post(`http://localhost:8000/users`,data)
+        .then((res)=>{
+            displaySnackBar('SignUp Successful!','Welcome Onboard.');
+            toggleLoading(false);
+            setFormData({type : 'reset'});
+            navigate('/signin');
+        })
+        .catch((err)=>{
+
+        })
+
+    }
+
+
     const handleSubmit = (e)=>{
         e.preventDefault();
         toggleLoading(true);
@@ -98,11 +126,8 @@ const Signup = ()=>{
             .then((userCredential) => {
 
                 const user = userCredential.user;
-                toggleLoading(false);
-                setFormData({type : 'reset'});
+                signUpDataUpload(user.uid);
                 updateProfile(auth.currentUser,{displayName:`${formData.firstName} ${formData.lastName}`});
-                console.log(user);
-                alert('Signup Successful!');
                 
             })
             .catch((error) => {
