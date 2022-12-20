@@ -1,4 +1,4 @@
-#Travelocity 
+<h1 style="color:blue;"> Travelocity.com </h1>
 
 CW Project B21 <br/>
 Project Website : [https://www.travelocity.com/](https://travelocity-zeta.vercel.app/) <br/>
@@ -16,12 +16,13 @@ Installed NPMs :
 
 Product Description : 
 
+<b>Travelocity </b> is a platform where the users can enter the name of a place and find the hotels in that area and make a booking right away.<br/>
 
-<h1>HomePage : </h1>
+<h3>HomePage : </h3>
 
 ![Travelocity](https://user-images.githubusercontent.com/112630634/208607701-f8e72cd2-f0ff-44fb-9f60-fe33775ae9da.png)
 
-<b>Travelocity </b> is a platform where the users can enter the name of a place and find the hotels in that area and make a booking right away.<br/>
+
 Once the user enters the place name and searches for the hotels, the user will also get an option to sort or filter the data as per their choice. Also the user can search by the hotel name if he wishes to search for a particular hotel.
 
 <h3> Searching and Sorting Options : </h3>
