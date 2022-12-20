@@ -20,4 +20,10 @@ Installed NPMS :
 3. chakra-UI (5)
 4. axios
 
+Product Description : 
+
+<b>Travelocity </b> is a platform where the users can enter the name of a place and find the hotels in that area and make a booking right away.<br/>
+
+The backend of the project is created locally on JSON server which will soon be updated to live server.
+
 
