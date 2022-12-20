@@ -1,7 +1,6 @@
-# tame-porter-1759
+#Travelocity 
+
 CW Project B21 <br/>
-Creator : Snehil Agrahari <br/>
-IA Manager : Mohsin Iqbal <br/>
 Project Website : [https://www.travelocity.com/](https://travelocity-zeta.vercel.app/) <br/>
 Project Name : Travelocity <br/>
 git-repo-name : tame-porter-1759 <br/>
