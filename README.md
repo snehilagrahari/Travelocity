@@ -1,10 +1,7 @@
 <h1 style="color:blue;"> Travelocity.com </h1>
 
-CW Project B21 <br/>
-Project Website : [https://www.travelocity.com/](https://travelocity-zeta.vercel.app/) <br/>
+Project Website : [https://www.travelocity-zeta.vercel.app/](https://travelocity-zeta.vercel.app/) <br/>
 Project Name : Travelocity <br/>
-git-repo-name : tame-porter-1759 <br/>
-CW duration : 12-12-2022 to 17-12-2022 (6 days) <br/>
 
 
 Installed NPMs :
