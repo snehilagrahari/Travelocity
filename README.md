@@ -4,12 +4,7 @@ Project Website : [https://www.travelocity-zeta.vercel.app/](https://travelocity
 Project Name : Travelocity <br/>
 
 
-Installed NPMs :
-
-1. React
-2. React-router-dom
-3. chakra-UI (5)
-4. axios
+TECH STACK : HTML | CSS | JavaScript | ReactJS | Contexts | MongoDB | EXPRESS | NodeJS | Chakra-UI (UI - Library)
 
 Product Description : 
 
@@ -32,7 +27,7 @@ Once you make a booking the trip details will be available on the trips page whi
 
 <h3>Trips Page : </h3>
 
-![Trips](https://user-images.githubusercontent.com/112630634/208609059-6920acbc-6c4d-4406-93fb-8ae1dd4bc718.png)
+![Trips](https://user-images.githubusercontent.com/112630634/232289206-9b957dae-c1ac-4f2c-b1c9-d56b85313c51.png)
 
 
 The backend of the project is created locally on JSON server.<br/>
