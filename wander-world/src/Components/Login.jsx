@@ -10,7 +10,8 @@ import {
     Flex,
     Text,
     Button,
-    Link
+    Link,
+    useToast
 
 } from '@chakra-ui/react'
 import { useState } from "react"
@@ -18,11 +19,12 @@ import { useReducer } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
 import AuthContext from "../Contexts/AuthContext";
-import authApp from "./firebase.config"; 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+// import authApp from "./firebase.config"; 
+// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import AlertDialogExample from "./AlertBox";
 import { useNavigate } from 'react-router-dom';
 import {displaySnackBar} from './SnackBar'
+import axios from 'axios';
 
 
 
@@ -31,8 +33,6 @@ const initForm = {
     email : '',
     password : ''
 }
-
-const auth = getAuth(authApp);
 
 const reducer = (state , action)=>{
     switch(action.type)
@@ -58,9 +58,10 @@ const Login = ()=>{
 
     const [formData , setFormData] = useReducer(reducer , initForm)
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const toast = useToast();
 
-    const {loading, toggleLoading, error , toggleError , toggleAuth, toggleAuthId , toggleAuthName} = useContext(AuthContext);
+    const {loading, toggleLoading, error , toggleError , toggleAuth, toggleToken , toggleAuthName} = useContext(AuthContext);
     const [errorCode , setErrorCode] = useState(null); 
 
     useEffect(()=>{
@@ -83,25 +84,40 @@ const Login = ()=>{
         setFormData({type:'email' , payload : e.target.value})
     }
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault()
-        toggleLoading(true);
-        signInWithEmailAndPassword(auth, formData.email, formData.password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                toggleLoading(false);
-                toggleAuth(true);
-                toggleAuthId(user.uid);
-                displaySnackBar('Login Succesful!','Plan for a trip now!');
-                toggleAuthName(user.displayName);
-                setFormData({type : 'reset'})
-                navigate('/');
-            })
-            .catch((error) => {
-                setErrorCode(error.code);
-                toggleLoading(false);
-                toggleError(true);
-            }); 
+        try{
+            toggleLoading(true);
+            const creds = {
+                ...formData
+            };
+            const res = await axios.post('https://chartreuse-green-bighorn-sheep-wear.cyclic.app/user/login',creds);
+            const data = res.data;
+            toast({
+                title : "Login Successful!",
+                description : `Welcome ${data.username}! Plan your journey with us!`,
+                status : 'success',
+                isClosable : true,
+                duration : 2000
+            });
+            console.log(data);
+            toggleLoading(false);
+            toggleToken(data.token);
+            localStorage.setItem('travelocity-token',JSON.stringify(data.token));
+            toggleAuthName(data.username);
+            toggleAuth(true);
+            navigate('/');
+        }
+        catch(err){
+            toast({
+                title : 'Login error!',
+                status : 'error',
+                isClosable : true,
+                duration : 2000,
+                description : err.message
+            });
+            toggleLoading(false);
+        }
     }
 
     const closeDialog = ()=>{

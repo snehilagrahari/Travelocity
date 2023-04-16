@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import SearchContext from "../Contexts/SearchContext";
 
 import {
@@ -25,7 +25,7 @@ const SearchPageSearchBar = (props)=>{
 
     const {searchForm , updateSearchForm} = useContext(SearchContext);
 
-    const {year , month , day} = findDate();
+    const [minDate, setMinDate] = useState(Date.now());
     
     const handleFormChange = (e)=>{
         const action = {
@@ -70,7 +70,7 @@ const SearchPageSearchBar = (props)=>{
                                         type='date' 
                                         value={searchForm['check-in']}
                                         onChange={handleFormChange}
-                                        min={`${year}-${month}-${day}`}
+                                        min={minDate}
                                         color='grey'
                                         required
                                         bg='white'/>

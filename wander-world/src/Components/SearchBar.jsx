@@ -20,7 +20,7 @@ import {
   Image,
   Center
 } from '@chakra-ui/react'
-import { useContext } from 'react'
+import { useContext, useRef } from 'react'
 import {useNavigate} from 'react-router-dom'
 import {ImLocation} from 'react-icons/im'
 import SearchContext from '../Contexts/SearchContext'
@@ -30,9 +30,9 @@ import findDate from './TodayDate'
 
 const SearchBar = ()=>{
 
-    const {day , month , year} = findDate();
-
     const navigate = useNavigate();
+    const {year, day, month} = findDate();
+    console.log(year,day,month);
 
     const {searchForm, updateSearchForm} = useContext(SearchContext);
 
@@ -94,7 +94,7 @@ const SearchBar = ()=>{
                                         type='date' 
                                         value={searchForm['check-in']}
                                         onChange={handleFormChange}
-                                        min={`${year}-${month}-${day}`}
+                                        min={`${year}-${month<=9?'0'+month:month}-${day+1<=9?'0'+(day):(day)}`}
                                         color='grey'
                                         required/>
                                     </Box>

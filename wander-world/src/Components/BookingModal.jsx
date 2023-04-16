@@ -15,9 +15,13 @@ import {
     Text,
     FormControl,
     FormLabel,
-    Spacer
+    Spacer,
+    HStack,
+    Image,
+    Divider,
+    useToast
 } from '@chakra-ui/react'
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import AuthContext from '../Contexts/AuthContext';
 import SearchContext from '../Contexts/SearchContext'
 import { displaySnackBar } from './SnackBar';
@@ -41,10 +45,15 @@ function dateDiff(date1, date2) {
 
 function BookingModal(props) {
 
-    const {authName,authId} = useContext(AuthContext);
+    const {authName,token} = useContext(AuthContext);
 
-    const {searchForm} = useContext(SearchContext);
+    const {searchForm, updateSearchForm} = useContext(SearchContext);
     const [loading , onLoading] = useState(false);
+    const minDate = useRef(null);
+
+    useEffect(()=>{
+        minDate.current = new Date();
+    },[])
 
     const [num , setNum ] = useState(1);
 
@@ -56,34 +65,58 @@ function BookingModal(props) {
         onLoading(val);
     }
 
-    let {room,hotelName , onClose, onOpen, isOpen} = props;
+    let {room, hotelDetails, onClose, onOpen, isOpen} = props;
+
+    const toast = useToast();
 
     const handleBooking = ()=>{
-        onLoading(true);
+        // onLoading(true);
         confirmTrip();
-        
     }
 
     const confirmTrip = ()=>{
-
-        const data = {
-            profileId : authId,
-            hotelName : hotelName,
-            total : ((num?num:1)*Number(room.roomPrice)),
+        const creds = {
+            hotelId : hotelDetails['_id'],
+            hotelName : hotelDetails['hotelName'],
+            hotelLocation : hotelDetails.hotelLocation,
+            checkIn : searchForm['check-in'],
+            checkOut : searchForm['check-out'],
+            travellers : searchForm['travelers'],
             roomDetails : room,
-            ...searchForm
-        }
-
-        axios.post('http://localhost:8000/trips',data)
+            total : ((num?num:1)*Number(room?.roomPrice)*(100-hotelDetails.hotelDiscount)/100)
+        };
+        axios({
+            method : 'POST',
+            url : '/hotel/bookRoom',
+            baseURL : 'http://localhost:8080',
+            data : JSON.stringify(creds),
+            headers : {
+                Authorization : token,
+                'Content-type' : 'application/json'
+            }
+        })
         .then((res)=>{
             onLoading(false);
             onClose();
-            displaySnackBar('Trip Confirmed','Happy Traveling');
+            toast({
+                title : res.message,
+                description : `For Booking history go to Trips page.`,
+                duration : 2000,
+                status : 'success',
+                isClosable : true
+            });
         })
         .catch((err)=>{
+            console.log(err);
             onLoading(false);
             onClose();
-            displaySnackBar("Error! Try again later");
+            toast({
+                title : 'Booking Failed!',
+                description : err.message,
+                isClosable : true,
+                status : 'error',
+                duration : 2000
+            });
         })
 
     }
@@ -92,45 +125,69 @@ function BookingModal(props) {
 
     return (
         <>
-            <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+            <Modal closeOnOverlayClick={false}  size={{base : 'sm', sm : 'md', md : 'xl', xl : '2xl'}} isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
                     <ModalContent>
-                    <ModalHeader>Booking Details</ModalHeader>
+                    <ModalHeader fontSize="xl" color="green.600">Confirm Booking</ModalHeader>
                     <ModalCloseButton />
                     <form>
                     <ModalBody pb={6}>
-                        <FormControl>
-                            <FormLabel>Name</FormLabel>
-                            <Input value={authName} isDisabled />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel>City</FormLabel>
-                            <Input value={searchForm.place} isDisabled />
-                        </FormControl>
-                        <Flex gap={10}>
+                            <HStack alignItems="center" gap={5}>
+                                <Text fontSize="xl" color="#0a438b" fontWeight={'bold'}>Hotel Name : </Text>
+                                <Text fontSize="xl" color="black" fontWeight={'bold'}>{hotelDetails.hotelName}</Text>
+                            </HStack>
+                            <HStack alignItems={'center'} gap={5}>
+                            <Text fontSize="xl" color="#0a438b" fontWeight={'bold'}>City :</Text>
+                                <Text fontSize="xl" fontWeight={"bold"}>{hotelDetails.hotelLocation}</Text>
+                            </HStack>
+                        <Flex gap={10} mt={4} padding={5} border="1px solid lightgrey" borderRadius={'lg'}>
                             <FormControl>
-                                <FormLabel>Check-in</FormLabel>
-                                <Input value={searchForm['check-in']} isDisabled />
+                                <FormLabel color={'#0a438b'}>Check-in</FormLabel>
+                                <Input type="date"  onChange={(e)=>updateSearchForm({mode : 'check-in', data : e.target.value})} value={searchForm['check-in']} />
                             </FormControl>
                             <FormControl>
-                                <FormLabel>Check-out</FormLabel>
-                                <Input value={searchForm['check-out']} isDisabled />
+                                <FormLabel color="#0a438b">Check-out</FormLabel>
+                                <Input type={'date'} min={searchForm['check-in']} onChange={(e)=>updateSearchForm({mode : 'check-out',data : e.target.value})} value={searchForm['check-out']} />
                         </FormControl>
                         </Flex>
-                        <FormControl>
-                            <FormLabel>Travelers</FormLabel>
-                            <Input value={searchForm['travelers']} isDisabled />
+                        <FormControl padding={5} mt={2} border="1px solid lightgrey" borderRadius="lg">
+                            <FormLabel color="#0a438b">Travelers</FormLabel>
+                            <Select placeholder='No. Of Travelers' value={searchForm.travelers} onChange={(e)=>updateSearchForm({mode: 'travelers',data : e.target.value})}>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </Select>
                         </FormControl>
-                        <Box margin='20px 0px'>
-                            <Heading size='md'>Room Details</Heading>
-                            <Text fontSize='md'>Room Name :<b> {room?.roomName}</b></Text>
-                            <Text fontSize='md'>Room Price :<b> $ {room?.roomPrice}/day</b></Text> 
-                            <Text fontSize='md'>Number of Days :<b>{num?num:1} Days</b></Text> 
-                        </Box>
-                        <Flex margin='20px 0px'>
-                            <Heading size='lg'>Total</Heading>
-                            <Spacer />
-                            <Text fontSize='lg' fontWeight='bold' color='red'>$ {(num?num:1)*Number(room?.roomPrice)}</Text>   
+                        <HStack alignItems="start" mt={4}>
+                            <Box margin='20px 0px' flex={6}>
+                                <Text color="#0a438b" fontSize='lg'>Room Details</Text>
+                                <Text fontSize='md' mt={3}>Room Name :<b> {room?.roomName}</b></Text>
+                                <Text fontSize='md'>Room Price :<b> $ {room?.roomPrice}/day</b></Text> 
+                                <Text fontSize='md'>Number of Days : <b> {num?num:1} Days</b></Text> 
+                            </Box>
+                            <Box flex={4}>
+                                <Image src={room?.roomImageURL} alt={room?.roomName} />
+                            </Box>
+                        </HStack>
+                        
+                        <Heading size='lg' color="#0a438b">Pricing Details</Heading>
+                        <Flex direction="column" margin='20px 0px' alignItems={'start'} w="full" mt={4} border="1px solid lightgrey" padding={4} borderRadius={'lg'} gap={3}>
+                            
+                            <HStack alignItems="center" justifyContent="space-between" w="full">
+                                <Text color="grey" fontSize="lg">Total Price</Text>
+                                <Text fontSize='lg' fontWeight='bold' color='grey'>$ {(num?num:1)*Number(room?.roomPrice)}</Text>   
+                            </HStack>
+                            <HStack alignItems="center" justifyContent="space-between" w="full">
+                                <Text color="grey" fontSize="lg">Hotel Discount</Text>
+                                <Text color="grey" fontSize="md" >( -{hotelDetails.hotelDiscount}% ) 
+                                <Text as="span" color="black" fontSize="xl"> $ {(room?.roomPrice*hotelDetails.hotelDiscount / 100).toFixed(2)}</Text></Text>
+                            </HStack>
+                            <Divider />
+                            <HStack alignItems="center" justifyContent="space-between" w="full">
+                                <Text color="black" fontSize="lg" fontWeight="bold">Net Payable</Text>
+                                <Text color="red" fontSize="xl" fontWeight="bold">$ {((num?num:1)*Number(room?.roomPrice)*(100-hotelDetails.hotelDiscount)/100)}</Text>
+                            </HStack>
                         </Flex>
                     </ModalBody>
 
@@ -139,12 +196,12 @@ function BookingModal(props) {
                             isLoading={loading}
                             loadingText='Submitting'
                             colorScheme='teal'
-                            variant='outline'
+                            variant='solid'
                             onClick={handleBooking}
                         >
-                            Submit
+                            Confirm Booking
                         </Button>
-                        <Button onClick={onClose}>Cancel</Button>
+                        <Button ml={4} onClick={onClose}>Cancel</Button>
                     </ModalFooter>
                     </form>
                     </ModalContent>

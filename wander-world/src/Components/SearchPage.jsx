@@ -52,7 +52,7 @@ const SearchPage = ()=>{
     const [ searchParams , dispatch]  = useReducer(reducer , initState);
     const [hotelData ,setHotelData] = useState([]);
 
-    const apiRef = useRef();
+    // const apiRef = useRef();
 
     
 
@@ -60,51 +60,41 @@ const SearchPage = ()=>{
 
     const [inLoader,setInLoader] = useState(true)
 
-    useEffect(()=>{
-        debounceHotels(searchParams);
-    },[searchParams])
+    
 
     function toggleSearchParams(action){
         dispatch(action);
     }
 
-    const debounceHotels = (searchParams)=>{
-        setInLoader(true);
-        if(apiRef.current)
-        {
-            clearTimeout(apiRef);
+    useEffect(()=>{
+        getHotels(searchParams);
+    },[searchParams]);
+    // console.log(searchParams);
+    
+    const getHotels = async (searchParams)=>{
+        // console.log(searchParams, "Request" )
+        try{
+            const res = await axios.get(` https://chartreuse-green-bighorn-sheep-wear.cyclic.app/hotel`,{
+                params :{
+                    cityName : searchParams.q,
+                    q : searchParams.hotelName,
+                    lte : searchParams.lte,
+                    sort : searchParams.sort,
+                    order : 'ASC'
+                }
+            });
+            setHotelData(res.data);
+            setLoader(false);
+            setInLoader(false)
         }
-        apiRef.current = setTimeout(() => {
-            getHotels(searchParams);
-        }, 2000);
+        catch(err){
+            console.log(err);
+        }
     }
-    
-    
-    const getHotels = (searchParams)=>{
-        
-        axios.get(` http://localhost:8000/hotels`,{
-            params:{
-                cityName : searchParams.q,
-                q : searchParams.hotelName,
-                hotelPrice_lte : searchParams.lte,
-                _sort : searchParams.sort,
-                _order : 'ASC'
-            }
-        })
-        .then((res)=>{
-            setHotelData((prev)=>res.data);
-            setLoader(false);
-            setInLoader(false);
-            setPageParams(searchParams);
-        })
-        .catch((error)=>{
-            console.log(error);
-            setLoader(false);
-            setInLoader(false);
-        })
 
-        
-    }
+
+    
+
     return loader?(<FullPageLoader height="87vh"/>):(
         <>
             <SearchPageSearchBar toggleSubmit={toggleSearchParams} />

@@ -6,7 +6,7 @@ export const AuthContextProvider = ({children})=>{
 
     const [isAuth, setAuth] = useState(false);
 
-    const [authId , setAuthId] = useState(null)
+    const [token , setToken] = useState(null)
     const [authName, setAuthName ] = useState(null);
 
     const [loading , setLoading] = useState(false);
@@ -17,8 +17,8 @@ export const AuthContextProvider = ({children})=>{
         setAuth(val);
     }
 
-    const toggleAuthId = (val)=>{
-        setAuthId(val);
+    const toggleToken = (val)=>{
+        setToken(val);
     }
 
     const toggleAuthName = (val) =>{
@@ -34,8 +34,8 @@ export const AuthContextProvider = ({children})=>{
     const value={
         isAuth,
         toggleAuth,
-        authId,
-        toggleAuthId,
+        token,
+        toggleToken,
         authName,
         toggleAuthName,
         loading,

@@ -1,14 +1,13 @@
-import { Box,Flex,Heading,Image,Tag,Text } from "@chakra-ui/react"
+import { Box,Flex,HStack,Heading,Image,Tag,Text } from "@chakra-ui/react"
 import {useNavigate} from 'react-router-dom'
 
 
 const SearchHotelCard = (props)=>{
 
     const {
-        id,
+        _id,
         hotelLocation,
         hotelDiscount,
-        strikedOff,
         hotelPrice,
         hotelImages,
         hotelName,
@@ -21,7 +20,7 @@ const SearchHotelCard = (props)=>{
 
 
     const handleClick=()=>{
-        navigate(`/Hotels/${id}`);
+        navigate(`/Hotels/${_id}`);
     }
 
 
@@ -48,7 +47,10 @@ const SearchHotelCard = (props)=>{
                             alignItems='flex-end' p='20px 2px 5px 2px'>
                                 <Text color='grey' fontSize='12px'>includes taxes & fees</Text>
                                 <Text color='grey' fontSize='12px'>${parseInt(1.1*hotelPrice)} total</Text>
-                                <Text fontSize='xl' fontWeight='bold'>${hotelPrice}</Text>
+                                <HStack gap={3} alignItems={'center'}>
+                                    <Text fontSize='lg' color="grey" textDecoration={"line-through"} >${hotelPrice} </Text> 
+                                    <Text textDecoration="none" color="black" fontSize="2xl" fontWeight="bold">${hotelPrice - (hotelDiscount*hotelPrice/100)}</Text>
+                                </HStack>
                                 <Tag bg='#ebf3f9' color='blue' p='10px 15px'>{hotelDiscount}% discount</Tag>
 
                             </Flex>

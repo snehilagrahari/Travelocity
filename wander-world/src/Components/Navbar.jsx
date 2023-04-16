@@ -16,7 +16,7 @@ import Travelocity from '../travelocity.png'
 
 const Navbar = ()=>{
 
-    const {isAuth ,toggleAuth,authName , toggleAuthName , authId, toggleAuthId} = useContext(AuthContext);
+    const {isAuth ,toggleAuth,authName , toggleAuthName , toggleToken} = useContext(AuthContext);
 
     const MenuListArray = [
         {
@@ -98,7 +98,7 @@ const Navbar = ()=>{
                                 <MenuItem fontSize='14px' onClick={()=>{
                                     toggleAuth(false);
                                     toggleAuthName(null);
-                                    toggleAuthId(null);
+                                    toggleToken(null);
                                 }}>Logout</MenuItem>
                                 </>
                             ):(

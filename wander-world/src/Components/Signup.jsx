@@ -10,7 +10,9 @@ import {
     Text,
     Button,
     Link,
-    FormHelperText
+    FormHelperText,
+    Select,
+    useToast
 
 } from '@chakra-ui/react'
 import axios from 'axios'
@@ -18,22 +20,25 @@ import { useReducer , useEffect } from "react"
 import { useState } from "react"
 import { useContext } from "react"
 import AuthContext from "../Contexts/AuthContext"
-import { getAuth, createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
-import authApp from "./firebase.config"
+// import { getAuth, createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
+// import authApp from "./firebase.config"
 import AlertDialogExample from "./AlertBox"
 import { displaySnackBar } from './SnackBar'
 import { useNavigate } from 'react-router-dom'
 
 
 
-const auth = getAuth(authApp);
+// const auth = getAuth(authApp);
 
 
 const initForm = {
-    firstName : '',
-    lastName : '',
+    name : '',
     email : '',
-    password : ''
+    password : '',
+    age : '',
+    gender : "",
+    mobile : "",
+    address : ""
 }
 
 const reducer = (state, action)=>{
@@ -45,11 +50,20 @@ const reducer = (state, action)=>{
         case 'password' : {
             return {...state , password : action.payload }
         }
-        case 'firstName' : {
-            return {...state , firstName : action.payload }
+        case 'name' : {
+            return {...state , name : action.payload }
         }
-        case 'lastName' : {
-            return {...state , lastName : action.payload }
+        case 'age' : {
+            return {...state , age : action.payload }
+        }
+        case 'mobile' : {
+            return {...state , mobile : action.payload }
+        }
+        case 'gender' : {
+            return {...state , gender : action.payload }
+        }
+        case 'address' : {
+            return {...state , address : action.payload }
         }
         case 'reset' : {
             return initForm
@@ -71,7 +85,7 @@ const Signup = ()=>{
     const [validate , setValidate] = useState(true);
     const [error_code , setError_code] = useState('');
     const navigate = useNavigate();
-
+    const toast = useToast();
     
 
     useEffect(()=>{
@@ -95,48 +109,36 @@ const Signup = ()=>{
         setFormData(action)
     }
 
-    const signUpDataUpload = (id,email)=>{
-
-        const data = {
-            id : id,
-            userEmail : formData.email.toLowerCase(),
-            userPassword : formData.password,
-            userName : `${formData.firstName} ${formData.lastName}`,
-            userTrips : []
-        }
-
-        axios.post(`http://localhost:8000/users`,data)
-        .then((res)=>{
-            displaySnackBar('SignUp Successful!','Welcome Onboard.');
-            toggleLoading(false);
-            setFormData({type : 'reset'});
-            navigate('/signin');
-        })
-        .catch((err)=>{
-
-        })
-
-    }
 
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault();
-        toggleLoading(true);
-        createUserWithEmailAndPassword(auth, formData.email ,formData.password )
-            .then((userCredential) => {
-
-                const user = userCredential.user;
-                signUpDataUpload(user.uid);
-                updateProfile(auth.currentUser,{displayName:`${formData.firstName} ${formData.lastName}`});
-                
+        try{
+            toggleLoading(true);
+            const creds = {
+                ...formData
+            }
+            const res = await axios.post('https://chartreuse-green-bighorn-sheep-wear.cyclic.app/user/register',creds);
+            toggleLoading(false);
+            toast({
+                title : "Account Successfully Created!",
+                isClosable : true,
+                duration : 2000,
+                status : 'success'
             })
-            .catch((error) => {
-                toggleLoading(false);
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                setError_code(errorCode);
-                toggleError(true);
+            setFormData({type : 'reset'});
+        }
+        catch(err){
+            toggleLoading(false)
+            toast({
+                title : 'Account Creation Failed!',
+                isClosable : true,
+                duration : 2000,
+                status : 'error',
+                description : err.message
             });
+            // console.log(err);
+        }
     }
 
     const closeDialog =()=> {
@@ -152,17 +154,33 @@ const Signup = ()=>{
             <form onSubmit={handleSubmit}>
                 <VStack margin="20px 0px" spacing={4}>
                     <FormControl>
+                        <FormLabel>Full Name</FormLabel>
+                        <Input name='name' type='text' value={formData.name} placeholder="Full Name" onChange={handleChange} w='full' required />
+                    </FormControl>
+                    <FormControl>
                         <FormLabel>Email address</FormLabel>
                         <Input name='email' type='email' value={formData.email} onChange={handleChange} w='full' placeholder='Email Address' required/>
-                        <FormHelperText>We'll never share your email</FormHelperText>
+                        <FormHelperText fontSize="12px">We'll never share your email</FormHelperText>
                     </FormControl>
                     <FormControl>
-                        <FormLabel>First Name</FormLabel>
-                        <Input name='firstName' type='text' value={formData.firstName} placeholder="First Name" onChange={handleChange} w='full' required />
+                        <FormLabel>Gender</FormLabel>
+                        <Select placeholder="Gender" name="gender" value={formData.gender} onChange={handleChange} w="full" >
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Others">Others</option>
+                        </Select>
                     </FormControl>
                     <FormControl>
-                        <FormLabel>Last Name</FormLabel>
-                        <Input type='text' name='lastName' value={formData.lastName} placeholder="Last Name" onChange={handleChange} w='full' required/>
+                        <FormLabel>Age</FormLabel>
+                        <Input type='number' name='age' value={formData.age} placeholder="Age" onChange={handleChange} w='full' required/>
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Mobile</FormLabel>
+                        <Input type='number' name='mobile' value={formData.mobile} placeholder="Mobile" onChange={handleChange} w='full' required/>
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel>Address</FormLabel>
+                        <Input type='text' name='address' value={formData.address} placeholder="Address" onChange={handleChange} w='full' required/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>Password</FormLabel>

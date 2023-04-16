@@ -7,14 +7,15 @@ import { Box,Text,Container,Heading,Grid,Flex, GridItem, Image, HStack, VStack, 
     ModalFooter,
     Input,
     Select,
-    Button 
+    Button, 
+    useToast
 } from '@chakra-ui/react';
 import {
     useState ,
     useEffect
 }   from 'react'
 import FullPageLoader from './FullPageLoader'
-import {useParams} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import axios from 'axios'
 import RoomCard from './RoomCard';
 import { useDisclosure } from '@chakra-ui/react';
@@ -37,14 +38,26 @@ const HotelPage = ()=>{
         getHotelDetails();
     },[])
 
+    const toast = useToast();
+    const nav = useNavigate();
+
     const getHotelDetails = ()=>{
-        axios.get(`http://localhost:8000/hotels/${hotelId}`)
+        setLoading(true);
+        axios.get(`https://chartreuse-green-bighorn-sheep-wear.cyclic.app/hotel/${hotelId}`)
         .then((res)=>{
             setHotelDetails(res.data);
+            // console.log(res.data);
             setLoading(false);
         })
         .catch((err)=>{
-            console.log(err);
+            toast({
+                title : 'Hotel Id not found!',
+                description : 'Naviagting to Search Page',
+                duration : 2000,
+                status : 'info',
+                isClosable : true
+            });
+            nav('/Hotel-Search');
         })
     }
 
@@ -58,9 +71,9 @@ const HotelPage = ()=>{
     ) :
     (
         <>
-        <Box width='80%' textAlign='left' margin='30px 40px'>
+        <Box width='80%' textAlign='left' margin='40px auto'>
             <Box w='100%'>
-                    <Grid w='100%' templateColumns='2fr 1fr 1fr' gap={2} templateRows='200px 200px'>
+                    <Grid w='100%' templateColumns='2fr 1fr 1fr' gap={2} padding={10} border="2px solid lightgrey" templateRows='200px 200px'>
                         <GridItem rowSpan={2}>
                             <Image src={HotelDetails.hotelImages[0]} w='100%' h='100%'/>
                         </GridItem>
@@ -78,16 +91,19 @@ const HotelPage = ()=>{
                         </GridItem>
 
                     </Grid>
-                    <Heading as='h1' size='xl'>{HotelDetails.hotelName}</Heading>
-                    <Heading color='gray.500' size='md'>{HotelDetails.hotelLocation}</Heading>
-                    <VStack margin='20px 0px' alignItems='flex-start' spacing={10}>
-                        <Heading fontWeight='bold' size='lg'>{HotelDetails.hotelRating}/10 Wonderful</Heading>
-                        <Text color='blue' fontSize='md'>See all {HotelDetails.hotelReviews} Reviews</Text>
+                    <Heading mt="20px" as='h1' size='xl'>{HotelDetails.hotelName}</Heading>
+                    <Text color='gray.500' mt={3} fontSize='xl'>{HotelDetails.hotelLocation}</Text>
+                    <VStack margin='20px 0px' padding={7} border="1px solid lightgrey" alignItems='flex-start' spacing={10}>
+                        <Text fontSize='2xl'><Text as="span" fontSize="2xl" color="#0a438b">Guest Ratings : </Text>{HotelDetails.hotelRating}/10 Wonderful</Text>
+                        <HStack gap={10}>
+                            <Text fontSize="2xl" color="#0a438b">Guest Reviews : <font color="black">{HotelDetails.hotelReviews}</font></Text>
+                            <Text color='blue' textDecoration={"underline"} fontSize='lg'>See all Reviews </Text>
+                        </HStack>
                         <Box>
-                        <Heading as='h5' size='lg'>Popular Amenities</Heading>
+                        <Heading as='h5' size='lg' color="#0a438b">Popular Amenities</Heading>
                         <Grid templateColumns='250px 250px' margin={5} gap={5}>
                             {
-                                HotelDetails.hotelAmenities.map((el,i)=><Text key={i} fontWeight='semibold' color='gray' fontSize='lg'>{i+1}. {el}</Text>)
+                                HotelDetails.hotelAmenities.map((el,i)=><Text key={i} color='black' fontSize='xl'>{i+1}. {el}</Text>)
                             }
                         </Grid>
                     </Box>
@@ -108,7 +124,7 @@ const HotelPage = ()=>{
                 </Grid>
             </Box>
             <Box>
-                <BookingModal onClose={onClose} onOpen={onOpen} hotelName={HotelDetails.hotelName} isOpen={isOpen} room={room} />
+                <BookingModal onClose={onClose} onOpen={onOpen} hotelDetails={HotelDetails} isOpen={isOpen} room={room} />
             </Box>
                 
         </Box>

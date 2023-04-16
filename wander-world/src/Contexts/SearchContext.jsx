@@ -5,13 +5,12 @@ import findDate from "../Components/TodayDate";
 
 const SearchContext = createContext();
 
-const {day , month , year} = findDate();
 
-
+const {year, month, day} = findDate();
 const initialState = {
     place : '',
-    "check-in" : `${year}-${month}-${day}`,
-    "check-out" : `${year}-${month}-${day}`,
+    "check-in" : `${year}-${month<=9?'0'+month:month}-${day<=9?'0'+day:day}`,
+    "check-out" : `${year}-${month<=9?'0'+month:month}-${day<=9?'0'+day:day}`,
     travelers : ''
 }
 
