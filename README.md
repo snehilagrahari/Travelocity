@@ -30,9 +30,8 @@ Once you make a booking the trip details will be available on the trips page whi
 ![Trips](https://user-images.githubusercontent.com/112630634/232289206-9b957dae-c1ac-4f2c-b1c9-d56b85313c51.png)
 
 
-The backend of the project is created locally on JSON server.<br/>
-<h5 color='red'>In order to run locally the json server you can download the data file from here and run your JSON server on PORT 8000.</h5>
-[db.txt](https://github.com/snehilagrahari/tame-porter-1759/files/10266307/db.txt)
+THANK YOU! 
+SEE YOU IN NEXT PROJECT!
 
 
 
