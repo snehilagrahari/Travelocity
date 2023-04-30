@@ -88,7 +88,7 @@ function BookingModal(props) {
         axios({
             method : 'POST',
             url : '/hotel/bookRoom',
-            baseURL : 'http://localhost:8080',
+            baseURL : 'https://chartreuse-green-bighorn-sheep-wear.cyclic.app',
             data : JSON.stringify(creds),
             headers : {
                 Authorization : token,
@@ -181,7 +181,7 @@ function BookingModal(props) {
                             <HStack alignItems="center" justifyContent="space-between" w="full">
                                 <Text color="grey" fontSize="lg">Hotel Discount</Text>
                                 <Text color="grey" fontSize="md" >( -{hotelDetails.hotelDiscount}% ) 
-                                <Text as="span" color="black" fontSize="xl"> $ {(room?.roomPrice*hotelDetails.hotelDiscount / 100).toFixed(2)}</Text></Text>
+                                <Text as="span" color="black" fontSize="xl"> $ {((num?num:1)*room?.roomPrice*hotelDetails.hotelDiscount / 100).toFixed(2)}</Text></Text>
                             </HStack>
                             <Divider />
                             <HStack alignItems="center" justifyContent="space-between" w="full">

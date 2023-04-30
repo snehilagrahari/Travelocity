@@ -25,7 +25,7 @@ const TripCard = (props)=>{
             const res = await axios({
                 method : 'PATCH',
                 url : `/user/cancelBooking/${data['_id']}`,
-                baseURL : 'http://localhost:8080'
+                baseURL : 'https://chartreuse-green-bighorn-sheep-wear.cyclic.app'
             });
             console.log(res.data);
             toast({

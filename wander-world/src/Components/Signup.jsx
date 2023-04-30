@@ -110,7 +110,6 @@ const Signup = ()=>{
     }
 
 
-
     const handleSubmit = async (e)=>{
         e.preventDefault();
         try{
@@ -118,7 +117,7 @@ const Signup = ()=>{
             const creds = {
                 ...formData
             }
-            const res = await axios.post('https://chartreuse-green-bighorn-sheep-wear.cyclic.app/user/register',creds);
+            const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/register`,creds);
             toggleLoading(false);
             toast({
                 title : "Account Successfully Created!",
@@ -135,9 +134,8 @@ const Signup = ()=>{
                 isClosable : true,
                 duration : 2000,
                 status : 'error',
-                description : err.message
+                description : err.response.data.message
             });
-            // console.log(err);
         }
     }
 

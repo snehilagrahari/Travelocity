@@ -91,7 +91,7 @@ const Login = ()=>{
             const creds = {
                 ...formData
             };
-            const res = await axios.post('https://chartreuse-green-bighorn-sheep-wear.cyclic.app/user/login',creds);
+            const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/user/login`,creds);
             const data = res.data;
             toast({
                 title : "Login Successful!",
@@ -114,8 +114,9 @@ const Login = ()=>{
                 status : 'error',
                 isClosable : true,
                 duration : 2000,
-                description : err.message
+                description : err.response.data.message
             });
+            console.log(err);
             toggleLoading(false);
         }
     }
