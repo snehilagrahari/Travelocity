@@ -1,0 +1,8 @@
+
+.suggestionBox{
+    display : none;
+}
+
+.searchBar:hover + .suggestionBox{
+    display : flex;
+}

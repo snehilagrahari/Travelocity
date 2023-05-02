@@ -18,23 +18,38 @@ import {
   InputLeftElement,
   Button,
   Image,
-  Center
+  Center,
+  VStack
 } from '@chakra-ui/react'
-import { useContext, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 import {ImLocation} from 'react-icons/im'
 import SearchContext from '../Contexts/SearchContext'
 import findDate from './TodayDate'
+import style from './style.module.css' 
+import {GoLocation} from 'react-icons/go'
 
+
+const city = [
+    "San Francisco",
+    "Chicago",
+    "Delhi"
+]
 
 
 const SearchBar = ()=>{
 
     const navigate = useNavigate();
+    const [show, setShow] = useState(false);
     const {year, day, month} = findDate();
-    console.log(year,day,month);
 
     const {searchForm, updateSearchForm} = useContext(SearchContext);
+
+    useEffect(()=>{
+        document.getElementById('searchBar').addEventListener('input',()=>{
+            setShow(true);
+        })
+    },[])
 
     const handleSubmit=(e)=>{
         e.preventDefault();
@@ -48,6 +63,16 @@ const SearchBar = ()=>{
         }
 
         updateSearchForm(action);
+    }
+
+
+    const handleOptionClick = (e)=>{
+        const action = {
+            mode : 'place',
+            data : e
+        };
+        updateSearchForm(action);
+        setShow(false);
     }
 
     return (
@@ -71,22 +96,38 @@ const SearchBar = ()=>{
                             <form onSubmit={handleSubmit}>
                                 <FormControl p='40px 10px'>
                                 <Flex gap={5}>
-                                    <Box flex={3}>
-                                        <FormLabel fontSize='md'>Place</FormLabel>
-                                        <InputGroup>
-                                            <InputLeftElement
-                                            pointerEvents='none'
-                                            children={<ImLocation size="18px" color='grey' />}
-                                            />
-                                            <Input 
-                                            type='tel' 
-                                            name='place'
-                                            placeholder='Going to...' 
-                                            value={searchForm.place} 
-                                            onChange={handleFormChange}
-                                            required />
-                                        </InputGroup>
-                                    </Box>
+                                    <Flex direction={"column"} position="relative" flex={3}>
+                                        <Box>
+                                            <FormLabel fontSize='md'>Place</FormLabel>
+                                            <InputGroup >
+                                                <InputLeftElement
+                                                pointerEvents='none'
+                                                children={<ImLocation size="18px" color='grey' />}
+                                                />
+                                                <Input 
+                                                id="searchBar"
+                                                type='text' 
+                                                name='place'
+                                                placeholder='Going to...' 
+                                                value={searchForm.place} 
+                                                onChange={handleFormChange}
+                                                required />
+                                            </InputGroup>
+                                        </Box>
+                                        <VStack id="suggestionBox" position="absolute" display={show===true?'flex':'none'} top="100%" border="1px solid lightgrey" width="100%" zIndex={3} alignItems={'flex-start'} background="white">
+                                            {
+                                                city.map((el)=>(
+                                                <>
+                                                    <Flex direction="row" alignItems="center" onClick={(e)=>{
+                                                        e.preventDefault();
+                                                        handleOptionClick(el)}} _hover={{background : "#eee", cursor : 'pointer'}} padding={"20px 40px"} width="100%"  gap={3} key={el} color="rgb(106,106,106)">
+                                                        <GoLocation size="30px" color="grey" />
+                                                        <Text color="rgb(106,106,106)">{el}</Text>
+                                                    </Flex>
+                                                </>))
+                                            }
+                                        </VStack>
+                                    </Flex>
                                     <Box flex={1}>  
                                         <FormLabel fontSize='md'>Check-in</FormLabel>
                                         <Input 
